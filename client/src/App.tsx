@@ -1,7 +1,15 @@
+import { Route, Routes } from "react-router-dom";
+import AuthLayout from "./layout/AuthLayout";
+import SignUp from "./pages/SignUp";
+
 function App() {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <Routes>
+        <Route path="/" element={<AuthLayout />}>
+          <Route index element={<SignUp />} />
+        </Route>
+      </Routes>
     </>
   );
 }
