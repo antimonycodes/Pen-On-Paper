@@ -4,7 +4,7 @@ import { errorHandler } from "../utils/error.js";
 
 export const signup = async (req, res, next) => {
   console.log(req.body);
-  // try {
+
   const { username, email, password } = req.body;
   if (
     !username ||
@@ -24,7 +24,6 @@ export const signup = async (req, res, next) => {
     email,
     password: hashedPassword,
   });
-
   try {
     await newUser.save();
     res.json("Signup successful");
