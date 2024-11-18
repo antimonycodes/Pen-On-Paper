@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
@@ -17,11 +18,19 @@ mongoose
   });
 
 const app = express();
+// const cors = require("cors");
+
 app.use(express.json());
 
 app.listen(3000, () => {
   console.log("server is running on port 3000!!");
 });
+app.use(
+  cors({
+    // origin: "http://localhost:3000", // React app's URL
+    credentials: true, // Enable sending cookies if needed
+  })
+);
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);

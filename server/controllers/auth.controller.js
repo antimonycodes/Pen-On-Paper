@@ -48,63 +48,63 @@ export const signup = async (req, res, next) => {
   //   res.status(500).json({ error: "Internal server error" });
   // }
 };
-export const signin = async (req, res, next) => {
-  try {
-    const { username, email, password } = req.body;
-    console.log("Signup Request Body:", req.body);
+// export const signin = async (req, res, next) => {
+//   try {
+//     const { username, email, password } = req.body;
+//     console.log("Signin Request Body:", req.body);
 
-    // Check if either username/email and password are provided
-    if ((!username && !email) || !password) {
-      return next(
-        errorHandler(400, "Please provide email/username and password")
-      );
-    }
+//     // Check if either username/email and password are provided
+//     if ((!username && !email) || !password) {
+//       return next(
+//         errorHandler(400, "Please provide email/username and password")
+//       );
+//     }
 
-    // Create query based on provided credentials
-    const query = {};
-    if (email) {
-      query.email = email.toLowerCase();
-    }
-    if (username) {
-      query.username = username.toLowerCase();
-    }
+//     // Create query based on provided credentials
+//     const query = {};
+//     if (email) {
+//       query.email = email.toLowerCase();
+//     }
+//     if (username) {
+//       query.username = username.toLowerCase();
+//     }
 
-    // Find user with either username or email
-    const validUser = await User.findOne({
-      $or: [
-        { email: email?.toLowerCase() },
-        { username: username?.toLowerCase() },
-      ],
-    });
+//     // Find user with either username or email
+//     const validUser = await User.findOne({
+//       $or: [
+//         { email: email?.toLowerCase() },
+//         { username: username?.toLowerCase() },
+//       ],
+//     });
 
-    if (!validUser) {
-      return next(errorHandler(404, "User not found"));
-    }
+//     if (!validUser) {
+//       return next(errorHandler(404, "User not found"));
+//     }
 
-    // Verify password
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
-    if (!validPassword) {
-      return next(errorHandler(401, "Invalid password"));
-    }
+//     // Verify password
+//     const validPassword = bcryptjs.compareSync(password, validUser.password);
+//     if (!validPassword) {
+//       return next(errorHandler(401, "Invalid password"));
+//     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+//     // Generate JWT token
+//     const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
 
-    // Remove password from response
-    const { password: pass, ...userWithoutPassword } = validUser._doc;
+//     // Remove password from response
+//     const { password: pass, ...userWithoutPassword } = validUser._doc;
 
-    // Send response
-    return res
-      .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .json(userWithoutPassword);
-  } catch (error) {
-    console.error("Signin error:", error);
-    return next(error);
-  }
-};
+//     // Send response
+//     return res
+//       .status(200)
+//       .cookie("access_token", token, {
+//         httpOnly: true,
+//       })
+//       .json(userWithoutPassword);
+//   } catch (error) {
+//     console.error("Signin error:", error);
+//     return next(error);
+//   }
+// };
 // export const signin = async (req, res, next) => {
 //   const { email, password } = req.body;
 //   if (!email || !password || password === "" || password === "") {
@@ -176,3 +176,123 @@ export const signin = async (req, res, next) => {
 //     return next(error);
 //   }
 // };
+export const signin = async (req, res, next) => {
+  // try {
+  //   const { username, email, password } = req.body;
+  //   console.log("Signin Request Body:", {
+  //     username,
+  //     email,
+  //     passwordProvided: !!password,
+  //   });
+
+  //   // Check if either username/email and password are provided
+  //   if ((!username && !email) || !password) {
+  //     console.log("Validation failed:", {
+  //       username: !!username,
+  //       email: !!email,
+  //       password: !!password,
+  //     });
+  //     return next(
+  //       errorHandler(400, "Please provide email/username and password")
+  //     );
+  //   }
+
+  //   // Find user with either username or email
+  //   const validUser = await User.findOne({
+  //     $or: [
+  //       { email: email?.toLowerCase() },
+  //       { username: username?.toLowerCase() },
+  //     ],
+  //   });
+
+  //   console.log("User found:", !!validUser);
+
+  //   if (!validUser) {
+  //     return next(errorHandler(404, "User not found"));
+  //   }
+
+  //   // Verify password
+  //   const validPassword = bcryptjs.compareSync(password, validUser.password);
+  //   console.log("Password valid:", validPassword);
+
+  //   if (!validPassword) {
+  //     return next(errorHandler(401, "Invalid password"));
+  //   }
+
+  //   // Generate JWT token
+  //   const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+
+  //   // Remove password from response
+  //   const { password: pass, ...userWithoutPassword } = validUser._doc;
+
+  //   // Send response
+  //   return res
+  //     .status(200)
+  //     .cookie("access_token", token, {
+  //       httpOnly: true,
+  //     })
+  //     .json(userWithoutPassword);
+  // } catch (error) {
+  //   console.error("Signin error:", error);
+  //   return next(error);
+  // }
+  try {
+    const { username, email, password } = req.body;
+
+    // Log the incoming request body
+    console.log("Signin Request Body:", { username, email, password });
+
+    // Validate request
+    if ((!username && !email) || !password) {
+      console.log("Validation failed: Missing email/username or password");
+      return next(
+        errorHandler(400, "Please provide email/username and password")
+      );
+    }
+
+    // Find user by email or username
+    const validUser = await User.findOne({
+      $or: [
+        { email: email?.toLowerCase() },
+        { username: username?.toLowerCase() },
+      ],
+    });
+
+    console.log("User found:", !!validUser);
+
+    if (!validUser) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    // Verify password
+    const validPassword = bcryptjs.compareSync(password, validUser.password);
+
+    console.log("Password valid:", validPassword);
+
+    if (!validPassword) {
+      return next(errorHandler(401, "Invalid password"));
+    }
+
+    // Generate JWT token
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
+
+    console.log("Generated token:", token);
+
+    // Remove password from response
+    const { password: pass, ...userWithoutPassword } = validUser._doc;
+
+    // Send success response
+    return res
+      .status(200)
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .json({
+        success: true,
+        user: userWithoutPassword,
+      });
+  } catch (error) {
+    console.error("Signin error:", error);
+    return next(error);
+  }
+};

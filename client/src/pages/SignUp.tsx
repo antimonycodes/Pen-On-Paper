@@ -64,7 +64,7 @@ const SignUp = () => {
     <div className="mt-2">
       <div className="flex flex-col items-center">
         <p className="text-[#22172B] font-medium text-base my-8">Signing up</p>
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-4 w-full mb-4">
           <button className="w-full text-[#22172B] border flex items-center gap-4 border-[#22172B] py-[10px] px-20 rounded-[32px]">
             <img src={googleIcon} alt="Google icon" />
             Sign Up with your Google
@@ -74,9 +74,9 @@ const SignUp = () => {
             Continue with Facebook
           </button>
         </div>
-        <p className="text-[#22172B] text-xs my-4">
+        {/* <p className="text-[#22172B] text-xs my-4">
           Sign Up With Email Instead
-        </p>
+        </p> */}
       </div>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col gap-4">
